@@ -9,7 +9,7 @@ import com.department.dao.DepartmentDao;
 import com.department.dao.DepartmentDaoImpl;
 import com.employee.service.EmployeeService;
 import com.employee.service.EmployeeServiceImpl;
-import com.exception.DatabaseException;
+import com.util.exception.DatabaseException;
 import com.model.Department;
 import com.model.Employee;
 

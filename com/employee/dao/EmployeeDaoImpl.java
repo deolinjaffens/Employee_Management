@@ -20,9 +20,9 @@ import org.hibernate.Transaction;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import com.exception.DatabaseException;
-import com.helper.HibernateConnection;
-import com.helper.Manager;
+import com.util.exception.DatabaseException;
+import com.config.hibernate.HibernateConfig;
+import com.config.drivermanager.DriverManagerConfig;
 import com.model.Department;
 import com.model.Employee;
 
@@ -48,7 +48,7 @@ public class EmployeeDaoImpl implements EmployeeDao  {
      */
 
     public void addEmployee(Employee employee) throws DatabaseException {
-        Session session = HibernateConnection.getFactory().openSession();
+        Session session = HibernateConfig.getFactory().openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
@@ -71,7 +71,7 @@ public class EmployeeDaoImpl implements EmployeeDao  {
      */
 
     public Employee getEmployee(int id) throws DatabaseException {
-		Session session = HibernateConnection.getFactory().openSession();
+		Session session = HibernateConfig.getFactory().openSession();
 		try {
 			return session.get(Employee.class, id);
 		} catch (HibernateException e) {
@@ -79,29 +79,7 @@ public class EmployeeDaoImpl implements EmployeeDao  {
         } finally {
             session.close();
         }
-    }
-
-    /**
-     *Extracts the department details from the database
-     *
-     *@param id - id of the department whose details has to be extracted
-     *@param connection - connects the driver to the function
-     *@return department
-     *@throws DatabaseException
-     */
-
-    public Department getDepartment(int id, Connection connection) throws DatabaseException {
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT name FROM department where id = " + id);
-            resultSet.next();
-            Department department = new Department(resultSet.getString("name"), id);
-            return department;
-        } catch(SQLException e) {
-            throw new DatabaseException ("Database Error" + e);
-        }
-    }
-        
+    }   
 
     /**
      *updates any Specific details of any employee
@@ -111,7 +89,7 @@ public class EmployeeDaoImpl implements EmployeeDao  {
      */
 
     public void updateEmployee(Employee employee) throws DatabaseException {
-        Session session = HibernateConnection.getFactory().openSession();
+        Session session = HibernateConfig.getFactory().openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
@@ -139,7 +117,7 @@ public class EmployeeDaoImpl implements EmployeeDao  {
     */
 
    public void removeEmployee(int id) throws DatabaseException {
-       Session session = HibernateConnection.getFactory().openSession();
+       Session session = HibernateConfig.getFactory().openSession();
          Transaction transaction = null;
          try {
              transaction = session.beginTransaction();
@@ -171,7 +149,7 @@ public class EmployeeDaoImpl implements EmployeeDao  {
      */
         
     public List<Employee> getEmployees() throws DatabaseException {
-        Session session = HibernateConnection.getFactory().openSession();
+        Session session = HibernateConfig.getFactory().openSession();
         Transaction transaction = null;
         List<Employee> employees = new ArrayList<>();
         try {

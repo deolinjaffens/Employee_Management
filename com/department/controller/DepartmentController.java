@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.Scanner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.HibernateException;
+
 import com.model.Department;
 import com.department.service.DepartmentService;
 import com.department.service.DepartmentServiceImpl;
@@ -23,9 +27,11 @@ import com.model.Employee;
  */  
 
 public class DepartmentController {
-DepartmentService departmentService = new DepartmentServiceImpl(); 
-EmployeeController employeeController = new EmployeeController();
-Scanner scanner = new Scanner(System.in);
+	
+	private static Logger logger = LogManager.getLogger(DepartmentController.class);
+    DepartmentService departmentService = new DepartmentServiceImpl(); 
+    EmployeeController employeeController = new EmployeeController();
+    Scanner scanner = new Scanner(System.in);
     
     /**
 	 *<p>
@@ -92,9 +98,9 @@ Scanner scanner = new Scanner(System.in);
             departmentService.addDepartment(name);
             System.out.println("=============Department Added=============");
         } catch (DatabaseException e) {
-            System.out.println("Database Error" + e);
+            logger.error("Failed to add department");
         } catch (InputMismatchException e) {
-            System.out.println("Invalid value");
+            logger.warn(e.getMessage());
         }
     }
 
@@ -111,7 +117,7 @@ Scanner scanner = new Scanner(System.in);
                 System.out.printf("|%-13s|%-15s|\n",department.getId(),department.getName());
             }
         } catch (DatabaseException e) {
-            System.out.println("Database Error");
+            logger.error("Failed to fetch all departments");
         }
     }
     
@@ -130,9 +136,9 @@ Scanner scanner = new Scanner(System.in);
             departmentService.updateDepartment(id, name); 
             System.out.println("=============Department Updated=============");
         } catch (DatabaseException e) {
-            System.out.println("Database Error" + e);
+            logger.error("Failed to update department details");
         } catch (InputMismatchException e) {
-            System.out.println("Invalid value");
+            logger.warn(e.getMessage());
         }
     }
 
@@ -149,9 +155,9 @@ Scanner scanner = new Scanner(System.in);
             departmentService.removeDepartment(id);
       	    System.out.println("=============Department Deleted=============");
         } catch (DatabaseException e) {
-            System.out.println("Database Error" + e);
+            logger.error("Failed to add Department");
         } catch (InputMismatchException e) {
-            System.out.println("Invalid value" + e);
+            logger.warn(e.getMessage());
         }
     }
 
@@ -169,7 +175,7 @@ Scanner scanner = new Scanner(System.in);
                     System.out.println(employee.getId() + " - " + employee.getName());
             }
         } catch(DatabaseException e) {
-            System.out.println("Database Error" + e);
+            logger.error("Failed to fetch all employees");
         }
     }
 }

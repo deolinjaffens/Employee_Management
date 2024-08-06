@@ -9,14 +9,18 @@ import java.util.Iterator;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.HibernateException;
+
 import com.employee.service.EmployeeService;
 import com.employee.service.EmployeeServiceImpl;
-import com.exception.DatabaseException;
+import com.util.exception.DatabaseException;
 import com.model.Department;
 import com.model.Employee;
 import com.model.Skill;
 import com.skill.controller.SkillController;
-import com.validator.Validator;
+import com.util.validator.Validator;
 
 /**
  *<p>
@@ -28,8 +32,8 @@ import com.validator.Validator;
 
 public class EmployeeController {
     
+	private static Logger logger = LogManager.getLogger(EmployeeController.class);
     EmployeeService employeeService = new EmployeeServiceImpl();
-    SkillController skillController = new SkillController();
     DateTimeFormatter datetimeformatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     Scanner scanner = new Scanner(System.in);
     
@@ -51,57 +55,53 @@ public class EmployeeController {
                 }
                 System.out.print("Enter the department Id : ");
                 int id = scanner.nextInt();
-                for(Department department : employeeService.getAllDepartments()){
-                    if((department.getId()) == id) {
-	                    while(!flag) {
-	                        System.out.println(" ");
-	                        System.out.println("(1) Add an employee");
-	                        System.out.println("(2) View an employee");
-	                        System.out.println("(3) Update an employee");
-	                        System.out.println("(4) Delete an employee");
-	                        System.out.println("(5) Exit");
-	                        System.out.println(" ");
-	                        System.out.print("Enter an option : ");
-	                        int option = scanner.nextInt();
-                            System.out.println(" ");
+                Department department = employeeService.getDepartment(id);
+                
+	            while(!flag) {
+	                System.out.println(" ");
+	                System.out.println("(1) Add an employee");
+	                System.out.println("(2) View an employee");
+	                System.out.println("(3) Update an employee");
+	                System.out.println("(4) Delete an employee");
+	                System.out.println("(5) Exit");
+	                System.out.println(" ");
+	                System.out.print("Enter an option : ");
+	                int option = scanner.nextInt();
+                    System.out.println(" ");
 
-	                        switch(option) {
+	                switch(option) {
 
-		                        case 1:
-                                    addEmployee(department);
-		                            break;
+		                case 1:
+                            addEmployee(department);
+		                    break;
 
-		                        case 2:
-                                    viewEmployee();
-                                    break;
+		                case 2:
+                            viewEmployee();
+                            break;
 
-		                        case 3:
-                                    updateEmployee();
-		                            break;
+		                case 3:
+                            updateEmployee();
+		                    break;
 
-		                        case 4: 
-                                    removeEmployee();
-		                            break;
-							
-    		                    case 5:
-	    	                        flag = true;
-		                            break;
+		                case 4: 
+                            removeEmployee();
+		                    break;	
+    		            case 5:
+	    	                flag = true;
+		                    break;
 
-		                        default:
-		                            System.out.println("Invalid option!!");
-						    }
-					    }
-                    }
-				    break;
+		                default:
+		                    System.out.println("Invalid option!!");    
+					}
                 }				
 	        } else {
                 System.out.println("No department Found");
             }
             System.out.println("=============Back to Main Menu=============");
 		} catch(DatabaseException e) {
-			System.out.println("Database Error " + e);
+			logger.error(e.getMessage());
 		} catch(InputMismatchException e) {
-		    System.out.println("Enter a valid option");
+		    logger.warn(e.getMessage());
 		}
     }
 
@@ -122,13 +122,8 @@ public class EmployeeController {
             }
 	        System.out.print("Enter date of birth(dd-mm-yyyy): ");
             String getDob = scanner.next();
-	        LocalDate addDob = null;
-            try {
-                addDob = LocalDate.parse(getDob,datetimeformatter);
-            } catch(DateTimeParseException e){
-                System.out.println("Invalid date format ");
-                return;
-            } 
+	        //LocalDate addDob = null;
+            LocalDate addDob = LocalDate.parse(getDob,datetimeformatter);
 	        System.out.print("Enter Male(M) or Female(F): ");
 	        char addGender = scanner.next().charAt(0);
             if(!Validator.isValidGender(addGender)) {
@@ -146,14 +141,17 @@ public class EmployeeController {
             employeeService.addEmployee(name, addDob, department, addGender, addPhNum, addSalary);
             System.out.println("=============Employee Added=============");
         } catch(IllegalArgumentException e) {
-            System.out.println("Invalid Input" + e);
+            logger.warn(e.getMessage());
             return;
         } catch(InputMismatchException e) {
-            System.out.println("Invalid Input" + e);
+            logger.warn(e.getMessage());
             return;
         } catch(DatabaseException e) {
-            System.out.println("Database Error" + e);
-        }
+            logger.error("Failed to add employee");
+        } catch(DateTimeParseException e){
+            logger.warn(e.getMessage());
+            return;
+        } 
     } 
 
     /**
@@ -176,11 +174,11 @@ public class EmployeeController {
 	        System.out.println("Mob. Number : "+employee.getPhoneNumber());
 	        System.out.println("Salary : "+employee.getSalary());
         } catch(IllegalArgumentException e) {
-            System.out.println("Invalid Id number");
+            logger.warn(e.getMessage());
         } catch(DatabaseException e) {
-            System.out.println("Database Error" + e);
+            logger.error("Failed to fetch employee");
         } catch(InputMismatchException e) {
-            System.out.println("Invalid Input" + e);
+            logger.warn(e.getMessage());
             return;
         }
     }
@@ -209,13 +207,7 @@ public class EmployeeController {
             System.out.print(employee.getDob());
             System.out.print(") :");
             String stringDob = scanner.next();
-            LocalDate dob = null;
-            try {
-                dob = LocalDate.parse(stringDob,datetimeformatter);
-            } catch(DateTimeParseException e) {
-                System.out.println("Invlid date Format" + e);
-                return;
-            }
+            LocalDate dob = LocalDate.parse(stringDob,datetimeformatter);
             employee.setDob(dob);
             System.out.print("Gender (");
             System.out.print(employee.getGender());
@@ -241,11 +233,14 @@ public class EmployeeController {
             employeeService.updateEmployee(employee);
             System.out.println("=============Employee Updated=============");
         } catch(IllegalArgumentException e) {
-            System.out.println("Invalid Input");
+            logger.warn(e.getMessage());
         } catch(DatabaseException e) {
-            System.out.println("Database Error" + e);
+            logger.error("Failed to update employee details");
         } catch(InputMismatchException e) {
-            System.out.println("Invalid Input" + e);
+            logger.warn(e.getMessage());
+            return;
+        } catch(DateTimeParseException e) {
+            logger.warn(e.getMessage());
             return;
         }
     }
@@ -262,11 +257,11 @@ public class EmployeeController {
             int id = scanner.nextInt();
             employeeService.removeEmployee(id);
         } catch(IllegalArgumentException e) {
-            System.out.println("Id number does not exists");
+            logger.warn(e.getMessage());
         } catch(DatabaseException e) {
-            System.out.println("Database error" + e);
+            logger.error("Failed to remove employee from the database");
         } catch(InputMismatchException e) {
-            System.out.println("Invalid Input" + e);
+            logger.warn(e.getMessage());
             return;
         }
         System.out.println("=============Employee Deleted=============");

@@ -18,21 +18,23 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import com.model.Department;
-import com.exception.DatabaseException;
-import com.helper.Manager;
+import com.util.exception.DatabaseException;
+import com.config.drivermanager.DriverManagerConfig;
 import com.model.Employee;
 
 /**
+ *<p>
  *Stores and retrives informations from the database
- *
+ *</p>
  *@author Deolin Jaffens
  */
 
 public interface DepartmentDao {
 
     /**
+	 *<p>
      *Stores new department details in the database
-     *
+     *</p>
      *@param department - contain the department details to be added
      *@throws DatabaseException
      */
@@ -41,8 +43,9 @@ public interface DepartmentDao {
 
 
     /**
+	 *<p>
      *Extracts department from the Set departmentData
-     *
+     *</p>
      *@param departments - Extracts every department details and stores it
      *@return Set<Department>
      *@throws DatabaseException
@@ -62,8 +65,9 @@ public interface DepartmentDao {
 	public Department getDepartment(int id) throws DatabaseException;
 
     /**
+	 *<p>
      *Updates specific details of department in the database
-     *
+     *</p>
      *@param id - id of the department
      *@param name - name that has to be updated
      *@throws DatabaseException
@@ -72,9 +76,9 @@ public interface DepartmentDao {
     public void updateDepartment(int id, String name) throws DatabaseException;
 
     /**
-     *A specific Department will be converted in a way that it 
-     *will not be displayed in the controller
-     *
+	 *<p>
+     *Removes a specific department from the database
+     *</p>
      *@param id - id of the department which should be hid
      *@throws DatabaseException
      */
@@ -82,8 +86,9 @@ public interface DepartmentDao {
     public void removeDepartment(int id)  throws DatabaseException;
 
     /**
+	 *<p>
      *Check wheather the Set is empty
-     *
+     *</p>
      *@return boolean
      *@throws DatabaseException
      */

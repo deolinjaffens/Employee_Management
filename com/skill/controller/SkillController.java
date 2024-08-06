@@ -6,7 +6,10 @@ import java.util.InputMismatchException;
 import java.util.Set;
 import java.util.Scanner;
 
-import com.exception.DatabaseException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.util.exception.DatabaseException;
 import com.model.Employee;
 import com.model.Skill;
 import com.skill.service.SkillService;
@@ -20,6 +23,8 @@ import com.skill.service.SkillServiceImpl;
  */ 
 
 public class SkillController {
+	
+	private static Logger logger = LogManager.getLogger(SkillController.class);
     SkillService skillService = new SkillServiceImpl();
     Scanner scanner = new Scanner(System.in);
 
@@ -81,9 +86,9 @@ public class SkillController {
 				System.out.println("Employee Not Found");
 			}
 		} catch(DatabaseException e) {
-			System.out.println("Database Error");
+			logger.error(e.getMessage());
 		} catch(InputMismatchException e) {
-			System.out.Println("Enter a valid option");
+			logger.warn(e.getMessage());
 		}
 	}
    
@@ -102,7 +107,7 @@ public class SkillController {
             System.out.println(id);      
             System.out.println("=============Skill Added=============");
         } catch(DatabaseException e) {
-            System.out.println("Database Error" + e);
+            logger.error("failed to add employee");
         }
     }
 
@@ -119,7 +124,7 @@ public class SkillController {
                 System.out.println(skill.getName());
             } 
         } catch(DatabaseException e) {
-            System.out.println("Database Error" + e);
+            logger.error("Failed to fetch skills");
         }
     }
 
@@ -137,7 +142,7 @@ public class SkillController {
             String name = scanner.next();
             skillService.updateSkill(employee, id, name);
         } catch(DatabaseException e) {
-            System.out.println("Database Error" + e);
+            logger.error("Failed to update employee details");
         }
     }
 
@@ -154,7 +159,7 @@ public class SkillController {
             skillService.removeSkill(id, employee);
             System.out.println("=============Skill Removed=============");
         } catch(DatabaseException e) {
-            System.out.println("Database Error" + e);
+            logger.error("Failed to remove skill");
         }
     }
     
@@ -172,7 +177,7 @@ public class SkillController {
                 System.out.println(employees.getName());
             }
         } catch(DatabaseException e) {
-            System.out.println("Database Error" + e);
+            logger.error("Failed to fetch all employees");
         }
     }
 }

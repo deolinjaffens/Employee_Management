@@ -14,25 +14,25 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import com.helper.Manager;
-import com.exception.DatabaseException;
+import com.config.drivermanager.DriverManagerConfig;
+import com.util.exception.DatabaseException;
 import com.model.Department;
 import com.model.Employee;
 
 /**
- *Stores and retrives information related to employee from the
- *database
- *Implements the EmployeeDao interface
- *
+ *<p>
+ *Stores and retrives information related to employee from the database
+ *</p>
  *@author Deolin Jaffens
  */
 
 public interface EmployeeDao {
 
-   /**
+    /**
+     *<p>
      *Adds new employee details to the database
      *Links employee with department in the database
-     *
+     *</p>
      *@param employee - contains details of employee who is going to 
      *be added
      *@param department - contains details of department that the 
@@ -43,9 +43,10 @@ public interface EmployeeDao {
     public void addEmployee(Employee employee) throws DatabaseException;
    
     /**
+	 *<p>
      *Checks the avalability of specific employee details 
      *using id number and extracts it
-     *
+     *</p>
      *@param id - id of employee whose details are to be extracted
      *@return Employee
      *@throws DatabaseException
@@ -54,28 +55,21 @@ public interface EmployeeDao {
     public Employee getEmployee(int id) throws DatabaseException;
 
     /**
+	 *<p>
      *Extracts the department details from the database
-     *
+     *</p>
      *@param id - id of the department whose details has to be extracted
      *@param connection - connects the driver to the function
      *@return department
      *@throws DatabaseException
      */
 
-    public Department getDepartment(int id, Connection connection) throws DatabaseException;
-
-    /**
-     *updates any Specific details of any employee
-     *
-     *@param employee - contains employee whose details has to be deleted
-     *@throws DatabaseException
-     */
-
     public void updateEmployee(Employee employee) throws DatabaseException;
 
     /**
+	 *<p>
      *Restricts anyone from viewing details of a specific employee
-     *
+     *</p>
      *@param id - id of employee 
      *@throws DatabaseException
      */
@@ -83,8 +77,9 @@ public interface EmployeeDao {
     public void removeEmployee(int id) throws DatabaseException;
 
     /**
+	 *<p>
      *Extracts all the employees from the database
-     *
+     *</p>
      *@return Set<Employee>
      *@throws DatabaseException
      */
